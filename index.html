@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b6b5a">
+  <title>Digital Dost</title>
+  <style>
+    :root {
+      --primary: #0b6b5a;
+      --primary-soft: #e2f4ef;
+      --background: #f7f9f8;
+      --surface: #fff;
+      --text: #17201e;
+      --muted: #626c69;
+      --line: #e7eceb;
+      --danger: #c84a4a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #dfe7e4;
+      color: var(--text);
+      font-family: Inter, "Segoe UI", system-ui, sans-serif;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .app-shell {
+      width: min(100%, 430px);
+      height: 100vh;
+      height: 100dvh;
+      margin: 0 auto;
+      display: grid;
+      grid-template-rows: 76px minmax(0, 1fr) 72px;
+      overflow: hidden;
+      background: var(--background);
+      box-shadow: 0 0 40px rgba(24, 48, 43, .12);
+    }
+    .topbar, .composer {
+      background: var(--surface);
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand {
+      border: 0;
+      background: none;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0;
+      color: var(--text);
+      text-align: left;
+    }
+    .brand-mark, .welcome-icon {
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+    }
+    .brand-mark { width: 46px; height: 46px; }
+    .brand strong { display: block; font-size: 19px; }
+    .brand small { color: var(--primary); }
+    .status-pill {
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 12px;
+    }
+    .status-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 5px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    main { min-height: 0; position: relative; }
+    .view { display: none; height: 100%; }
+    .view.active { display: flex; }
+    #chatView { flex-direction: column; }
+    #privacyView { overflow-y: auto; }
+    .language-picker {
+      display: flex;
+      gap: 7px;
+      padding: 12px 18px 8px;
+    }
+    .language, .segment {
+      flex: 1;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 5px;
+      color: var(--muted);
+      background: var(--surface);
+    }
+    .language.active, .segment.active {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+    .chat-scroll { min-height: 0; flex: 1; overflow-y: auto; }
+    .welcome {
+      margin: 15px 18px;
+      padding: 24px 20px;
+      border-radius: 28px;
+      background: var(--primary-soft);
+    }
+    .welcome[hidden] { display: none; }
+    .welcome-icon { width: 58px; height: 58px; margin-bottom: 12px; }
+    .welcome h1 { margin: 0 0 5px; font-size: 28px; color: var(--primary); }
+    .welcome p { margin: 0 0 18px; line-height: 1.55; }
+    .suggestions { display: grid; gap: 8px; }
+    .suggestions button {
+      width: 100%;
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 14px;
+      background: var(--surface);
+      display: flex;
+      justify-content: space-between;
+      color: var(--text);
+      font-weight: 700;
+      text-align: left;
+    }
+    .arrow { font-size: 24px; line-height: 16px; color: var(--primary); }
+    .messages { display: grid; gap: 10px; padding: 12px 16px; }
+    .bubble {
+      max-width: 82%;
+      padding: 11px 15px;
+      border-radius: 20px 20px 5px 20px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 15px;
+      line-height: 1.55;
+      justify-self: end;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .bubble.assistant {
+      border-radius: 20px 20px 20px 5px;
+      background: var(--surface);
+      color: var(--text);
+      justify-self: start;
+      box-shadow: 0 1px 5px rgba(23, 32, 30, .08);
+    }
+    .bubble[dir="rtl"] { font-size: 16px; line-height: 1.75; text-align: right; }
+    .composer {
+      padding: 10px 16px 12px;
+      border-radius: 26px 26px 0 0;
+      box-shadow: 0 -5px 18px rgba(23, 32, 30, .07);
+    }
+    .voice-status { min-height: 0; color: var(--primary); font-size: 14px; }
+    .voice-status:not(:empty) { margin-bottom: 7px; }
+    .input-row { display: flex; gap: 8px; }
+    .input-row input {
+      min-width: 0;
+      flex: 1;
+      height: 50px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 0 16px;
+      outline: none;
+      background: var(--background);
+    }
+    .input-row input:focus { border-color: var(--primary); }
+    .send-button {
+      width: 50px;
+      height: 50px;
+      border: 0;
+      border-radius: 18px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 24px;
+    }
+    .send-button:disabled { opacity: .45; }
+    .mic-button {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 7px 0 0;
+      font-size: 13px;
+    }
+    .mic-button.listening { color: var(--danger); }
+    .privacy-content { width: 100%; padding: 24px 18px 30px; }
+    .eyebrow { margin: 0; color: var(--primary); font-size: 12px; font-weight: 800; }
+    .privacy-content h1 { margin: 4px 0; }
+    .section-lead { margin-top: 0; color: var(--muted); }
+    .mode-card, .settings-card {
+      margin: 14px 0;
+      border-radius: 18px;
+      background: var(--surface);
+      box-shadow: 0 1px 5px rgba(23, 32, 30, .08);
+    }
+    .mode-card { padding: 18px; background: var(--primary-soft); }
+    .mode-card p { margin: 0; font-size: 12px; font-weight: 800; color: var(--primary); }
+    .mode-card h2 { margin: 4px 0; font-size: 20px; }
+    .mode-card span { color: var(--muted); font-size: 14px; }
+    .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px; }
+    .setting-row strong, .setting-row span { display: block; }
+    .setting-row span { color: var(--muted); font-size: 13px; }
+    .divider { height: 1px; margin-left: 15px; background: var(--line); }
+    .switch input { position: absolute; opacity: 0; }
+    .switch span { display: block; width: 46px; height: 26px; border-radius: 999px; background: #ccd2d0; position: relative; }
+    .switch span::after { content: ""; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; border-radius: 50%; background: #fff; transition: .2s; }
+    .switch input:checked + span { background: var(--primary); }
+    .switch input:checked + span::after { transform: translateX(20px); }
+    .section-title { margin: 22px 0 8px; font-size: 16px; }
+    .segmented { display: flex; gap: 7px; padding: 8px; }
+    .tip { color: var(--muted); font-size: 13px; }
+    .permission-list { padding: 4px 15px; }
+    .permission { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); }
+    .permission:last-child { border-bottom: 0; }
+    .permission strong, .permission small { display: block; }
+    .permission small { color: var(--muted); }
+    .permission b { color: var(--primary); }
+    .danger-button {
+      width: 100%;
+      margin-top: 10px;
+      border: 1px solid var(--danger);
+      border-radius: 14px;
+      padding: 13px;
+      background: var(--surface);
+      color: var(--danger);
+      font-weight: 700;
+    }
+    .bottom-nav {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid var(--line);
+      background: var(--surface);
+    }
+    .nav-item { border: 0; background: none; color: var(--muted); }
+    .nav-item span, .nav-item strong { display: block; }
+    .nav-item.active { color: var(--primary); }
+    dialog {
+      width: min(340px, calc(100% - 36px));
+      border: 0;
+      border-radius: 18px;
+      padding: 20px;
+      color: var(--text);
+    }
+    dialog div { display: flex; justify-content: flex-end; gap: 8px; }
+    dialog button { border: 0; border-radius: 10px; padding: 10px 14px; }
+    dialog .danger { background: var(--danger); color: #fff; }
+    @media (min-width: 431px) {
+      .app-shell { height: min(860px, 96vh); margin-top: 2vh; border-radius: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="brand" type="button" aria-label="Go to chat" data-view="chat">
+        <span class="brand-mark">DD</span>
+        <span>
+          <strong>Digital Dost</strong>
+          <small id="modeLabel">Local &amp; private</small>
+        </span>
+      </button>
+      <button class="status-pill" type="button" data-view="privacy">
+        <span class="status-dot"></span>
+        <span id="statusText">SAFE</span>
+      </button>
+    </header>
+
+    <main>
+      <section class="view active" id="chatView" aria-label="Chat">
+        <div class="language-picker" aria-label="Chat language">
+          <button class="language active" type="button" data-lang="English">English</button>
+          <button class="language" type="button" data-lang="Roman Urdu">Roman Urdu</button>
+          <button class="language" type="button" data-lang="اردو">اردو</button>
+        </div>
+
+        <div class="chat-scroll" id="chatScroll">
+          <div class="welcome" id="welcome">
+            <div class="welcome-icon">DD</div>
+            <h1>How can I help?</h1>
+            <p>Talk, type, or choose a quick action.<br>Your everyday tasks stay on your phone.</p>
+            <div class="suggestions">
+              <button type="button" data-command="Open WhatsApp"><span>Open WhatsApp</span><span class="arrow">›</span></button>
+              <button type="button" data-command="Find a YouTube video"><span>Find a YouTube video</span><span class="arrow">›</span></button>
+              <button type="button" data-command="Turn on Wi-Fi"><span>Turn on Wi-Fi</span><span class="arrow">›</span></button>
+            </div>
+          </div>
+          <div class="messages" id="messages" aria-live="polite"></div>
+        </div>
+
+        <div class="composer">
+          <div class="voice-status" id="voiceStatus"></div>
+          <div class="input-row">
+            <input id="messageInput" type="text" autocomplete="off" placeholder="Type here…" aria-label="Message">
+            <button class="send-button" id="sendButton" type="button" aria-label="Send message">↑</button>
+          </div>
+          <button class="mic-button" id="micButton" type="button">
+            <span class="mic-icon">◎</span>
+            <span id="micLabel">Tap to speak</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="view" id="privacyView" aria-label="Privacy and settings">
+        <div class="privacy-content">
+          <div>
+            <p class="eyebrow">YOUR CONTROL</p>
+            <h1>Privacy &amp; settings</h1>
+            <p class="section-lead">Choose how Digital Dost works and what it can use.</p>
+          </div>
+          <div class="mode-card">
+            <p>CURRENT MODE</p>
+            <h2 id="currentMode">Local Privacy Mode</h2>
+            <span id="modeDescription">No cloud AI. Your conversations stay on this device.</span>
+          </div>
+          <div class="settings-card">
+            <div class="setting-row">
+              <div><strong>Online AI Mode</strong><span>Use an external AI service for open questions.</span></div>
+              <label class="switch"><input id="onlineToggle" type="checkbox"><span></span></label>
+            </div>
+            <div class="divider"></div>
+            <div class="setting-row">
+              <div><strong>Floating assistant</strong><span>Keep a quick-access button available.</span></div>
+              <label class="switch"><input id="floatingToggle" type="checkbox" checked><span></span></label>
+            </div>
+            <div class="divider"></div>
+            <div class="setting-row">
+              <div><strong>Speak replies</strong><span>Read voice answers aloud.</span></div>
+              <label class="switch"><input id="speakToggle" type="checkbox"><span></span></label>
+            </div>
+          </div>
+          <section>
+            <h2 class="section-title">Voice recognition language</h2>
+            <div class="settings-card segmented">
+              <button class="segment active" type="button" data-voice="English">English</button>
+              <button class="segment" type="button" data-voice="اردو">اردو</button>
+            </div>
+            <p class="tip">For Roman Urdu, type it or use the Urdu voice option.</p>
+          </section>
+          <section>
+            <h2 class="section-title">Permissions</h2>
+            <div class="settings-card permission-list">
+              <div class="permission"><span><strong>Microphone</strong><small>Used only when you tap speak</small></span><b>On</b></div>
+              <div class="permission"><span><strong>Floating overlay</strong><small>Displays above other apps</small></span><b>Demo</b></div>
+              <div class="permission"><span><strong>Contacts</strong><small>You choose contacts yourself</small></span><b>Off</b></div>
+            </div>
+          </section>
+          <button class="danger-button" id="deleteButton" type="button">Delete all conversations</button>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <button class="nav-item active" type="button" data-view="chat"><span>◉</span><strong>Chat</strong></button>
+      <button class="nav-item" type="button" data-view="privacy"><span>⌁</span><strong>Privacy</strong></button>
+    </nav>
+  </div>
+
+  <dialog id="deleteDialog">
+    <h2>Delete all conversations?</h2>
+    <p>This action cannot be undone.</p>
+    <div>
+      <button id="cancelDelete" type="button">Cancel</button>
+      <button id="confirmDelete" class="danger" type="button">Delete</button>
+    </div>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>
