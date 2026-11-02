@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -6,257 +6,330 @@
   <meta name="theme-color" content="#0b6b5a">
   <title>Digital Dost</title>
   <style>
-    :root {
-      --primary: #0b6b5a;
-      --primary-soft: #e2f4ef;
-      --background: #f7f9f8;
-      --surface: #fff;
-      --text: #17201e;
-      --muted: #626c69;
-      --line: #e7eceb;
-      --danger: #c84a4a;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #dfe7e4;
-      color: var(--text);
-      font-family: Inter, "Segoe UI", system-ui, sans-serif;
-    }
-    button, input { font: inherit; }
-    button { cursor: pointer; }
-    .app-shell {
-      width: min(100%, 430px);
-      height: 100vh;
-      height: 100dvh;
-      margin: 0 auto;
-      display: grid;
-      grid-template-rows: 76px minmax(0, 1fr) 72px;
-      overflow: hidden;
-      background: var(--background);
-      box-shadow: 0 0 40px rgba(24, 48, 43, .12);
-    }
-    .topbar, .composer {
-      background: var(--surface);
-    }
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 18px;
-      border-bottom: 1px solid var(--line);
-    }
-    .brand {
-      border: 0;
-      background: none;
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      padding: 0;
-      color: var(--text);
-      text-align: left;
-    }
-    .brand-mark, .welcome-icon {
-      display: grid;
-      place-items: center;
-      border-radius: 15px;
-      background: var(--primary);
-      color: #fff;
-      font-weight: 800;
-    }
-    .brand-mark { width: 46px; height: 46px; }
-    .brand strong { display: block; font-size: 19px; }
-    .brand small { color: var(--primary); }
-    .status-pill {
-      border: 0;
-      border-radius: 999px;
-      padding: 8px 12px;
-      background: var(--primary-soft);
-      color: var(--primary);
-      font-weight: 800;
-      font-size: 12px;
-    }
-    .status-dot {
-      display: inline-block;
-      width: 7px;
-      height: 7px;
-      margin-right: 5px;
-      border-radius: 50%;
-      background: var(--primary);
-    }
-    main { min-height: 0; position: relative; }
-    .view { display: none; height: 100%; }
-    .view.active { display: flex; }
-    #chatView { flex-direction: column; }
-    #privacyView { overflow-y: auto; }
-    .language-picker {
-      display: flex;
-      gap: 7px;
-      padding: 12px 18px 8px;
-    }
-    .language, .segment {
-      flex: 1;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 10px 5px;
-      color: var(--muted);
-      background: var(--surface);
-    }
-    .language.active, .segment.active {
-      border-color: var(--primary);
-      background: var(--primary);
-      color: #fff;
-    }
-    .chat-scroll { min-height: 0; flex: 1; overflow-y: auto; }
-    .welcome {
-      margin: 15px 18px;
-      padding: 24px 20px;
-      border-radius: 28px;
-      background: var(--primary-soft);
-    }
-    .welcome[hidden] { display: none; }
-    .welcome-icon { width: 58px; height: 58px; margin-bottom: 12px; }
-    .welcome h1 { margin: 0 0 5px; font-size: 28px; color: var(--primary); }
-    .welcome p { margin: 0 0 18px; line-height: 1.55; }
-    .suggestions { display: grid; gap: 8px; }
-    .suggestions button {
-      width: 100%;
-      border: 0;
-      border-radius: 14px;
-      padding: 13px 14px;
-      background: var(--surface);
-      display: flex;
-      justify-content: space-between;
-      color: var(--text);
-      font-weight: 700;
-      text-align: left;
-    }
-    .arrow { font-size: 24px; line-height: 16px; color: var(--primary); }
-    .messages { display: grid; gap: 10px; padding: 12px 16px; }
-    .bubble {
-      max-width: 82%;
-      padding: 11px 15px;
-      border-radius: 20px 20px 5px 20px;
-      background: var(--primary);
-      color: #fff;
-      font-size: 15px;
-      line-height: 1.55;
-      justify-self: end;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-    .bubble.assistant {
-      border-radius: 20px 20px 20px 5px;
-      background: var(--surface);
-      color: var(--text);
-      justify-self: start;
-      box-shadow: 0 1px 5px rgba(23, 32, 30, .08);
-    }
-    .bubble[dir="rtl"] { font-size: 16px; line-height: 1.75; text-align: right; }
-    .composer {
-      padding: 10px 16px 12px;
-      border-radius: 26px 26px 0 0;
-      box-shadow: 0 -5px 18px rgba(23, 32, 30, .07);
-    }
-    .voice-status { min-height: 0; color: var(--primary); font-size: 14px; }
-    .voice-status:not(:empty) { margin-bottom: 7px; }
-    .input-row { display: flex; gap: 8px; }
-    .input-row input {
-      min-width: 0;
-      flex: 1;
-      height: 50px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 0 16px;
-      outline: none;
-      background: var(--background);
-    }
-    .input-row input:focus { border-color: var(--primary); }
-    .send-button {
-      width: 50px;
-      height: 50px;
-      border: 0;
-      border-radius: 18px;
-      background: var(--primary);
-      color: #fff;
-      font-size: 24px;
-    }
-    .send-button:disabled { opacity: .45; }
-    .mic-button {
-      width: 100%;
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      padding: 7px 0 0;
-      font-size: 13px;
-    }
-    .mic-button.listening { color: var(--danger); }
-    .privacy-content { width: 100%; padding: 24px 18px 30px; }
-    .eyebrow { margin: 0; color: var(--primary); font-size: 12px; font-weight: 800; }
-    .privacy-content h1 { margin: 4px 0; }
-    .section-lead { margin-top: 0; color: var(--muted); }
-    .mode-card, .settings-card {
-      margin: 14px 0;
-      border-radius: 18px;
-      background: var(--surface);
-      box-shadow: 0 1px 5px rgba(23, 32, 30, .08);
-    }
-    .mode-card { padding: 18px; background: var(--primary-soft); }
-    .mode-card p { margin: 0; font-size: 12px; font-weight: 800; color: var(--primary); }
-    .mode-card h2 { margin: 4px 0; font-size: 20px; }
-    .mode-card span { color: var(--muted); font-size: 14px; }
-    .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px; }
-    .setting-row strong, .setting-row span { display: block; }
-    .setting-row span { color: var(--muted); font-size: 13px; }
-    .divider { height: 1px; margin-left: 15px; background: var(--line); }
-    .switch input { position: absolute; opacity: 0; }
-    .switch span { display: block; width: 46px; height: 26px; border-radius: 999px; background: #ccd2d0; position: relative; }
-    .switch span::after { content: ""; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; border-radius: 50%; background: #fff; transition: .2s; }
-    .switch input:checked + span { background: var(--primary); }
-    .switch input:checked + span::after { transform: translateX(20px); }
-    .section-title { margin: 22px 0 8px; font-size: 16px; }
-    .segmented { display: flex; gap: 7px; padding: 8px; }
-    .tip { color: var(--muted); font-size: 13px; }
-    .permission-list { padding: 4px 15px; }
-    .permission { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); }
-    .permission:last-child { border-bottom: 0; }
-    .permission strong, .permission small { display: block; }
-    .permission small { color: var(--muted); }
-    .permission b { color: var(--primary); }
-    .danger-button {
-      width: 100%;
-      margin-top: 10px;
-      border: 1px solid var(--danger);
-      border-radius: 14px;
-      padding: 13px;
-      background: var(--surface);
-      color: var(--danger);
-      font-weight: 700;
-    }
-    .bottom-nav {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      border-top: 1px solid var(--line);
-      background: var(--surface);
-    }
-    .nav-item { border: 0; background: none; color: var(--muted); }
-    .nav-item span, .nav-item strong { display: block; }
-    .nav-item.active { color: var(--primary); }
-    dialog {
-      width: min(340px, calc(100% - 36px));
-      border: 0;
-      border-radius: 18px;
-      padding: 20px;
-      color: var(--text);
-    }
-    dialog div { display: flex; justify-content: flex-end; gap: 8px; }
-    dialog button { border: 0; border-radius: 10px; padding: 10px 14px; }
-    dialog .danger { background: var(--danger); color: #fff; }
-    @media (min-width: 431px) {
-      .app-shell { height: min(860px, 96vh); margin-top: 2vh; border-radius: 24px; }
-    }
-  </style>
+:root {
+  --primary: #0b6b5a;
+  --primary-dark: #075044;
+  --primary-soft: #e2f4ef;
+  --secondary-soft: #ffeed4;
+  --background: #f7f9f8;
+  --surface: #fff;
+  --text: #17201e;
+  --muted: #626c69;
+  --line: #e7eceb;
+  --danger: #c84a4a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #dfe7e4;
+  color: var(--text);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button, input { font: inherit; }
+button { cursor: pointer; }
+
+.app-shell {
+  width: min(100%, 430px);
+  height: 100vh;
+  height: 100dvh;
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: 76px minmax(0, 1fr) 72px;
+  background: var(--background);
+  box-shadow: 0 0 40px rgba(24, 48, 43, .12);
+  overflow: hidden;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: var(--surface);
+  border-bottom: 1px solid rgba(231, 236, 235, .7);
+}
+
+.brand {
+  border: 0;
+  background: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--text);
+  text-align: left;
+}
+
+.brand-mark, .welcome-icon {
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  background: var(--primary);
+  color: white;
+  font-weight: 800;
+}
+
+.brand-mark { width: 46px; height: 46px; }
+.brand strong { display: block; font-size: 19px; }
+.brand small { color: var(--primary); }
+
+.status-pill {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+
+main { min-height: 0; position: relative; }
+.view { display: none; height: 100%; }
+.view.active { display: flex; }
+#chatView { flex-direction: column; }
+
+.language-picker {
+  display: flex;
+  gap: 7px;
+  padding: 12px 18px 8px;
+}
+
+.language {
+  flex: 1;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 5px;
+  color: var(--muted);
+  background: var(--surface);
+}
+
+.language.active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: white;
+}
+
+.chat-scroll {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.welcome {
+  width: calc(100% - 36px);
+  margin: 15px 18px;
+  padding: 24px 20px;
+  border-radius: 28px;
+  background: var(--primary-soft);
+  text-align: left;
+}
+
+.welcome-icon { width: 58px; height: 58px; margin-bottom: 12px; font-size: 20px; }
+.welcome h1 { margin: 0 0 5px; font-size: 28px; color: var(--primary); }
+.welcome p { margin: 0 0 18px; line-height: 1.55; color: var(--text); }
+.suggestions { display: grid; gap: 8px; }
+.suggestions button {
+  width: 100%;
+  border: 0;
+  border-radius: 14px;
+  padding: 13px 14px;
+  background: var(--surface);
+  display: flex;
+  justify-content: space-between;
+  color: var(--text);
+  font-weight: 700;
+  text-align: left;
+}
+.arrow { font-size: 24px; line-height: 16px; color: var(--primary); }
+
+.messages {
+  display: grid;
+  gap: 10px;
+  padding: 12px 16px;
+}
+
+.bubble {
+  max-width: 82%;
+  padding: 11px 15px;
+  border-radius: 20px 20px 5px 20px;
+  background: var(--primary);
+  color: white;
+  font-family: Inter, "Segoe UI", "Noto Naskh Arabic", "Noto Nastaliq Urdu", "Noto Sans Arabic", Tahoma, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  letter-spacing: normal;
+  text-align: left;
+  text-wrap: pretty;
+  white-space: pre-wrap;
+  justify-self: end;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.bubble.assistant {
+  border-radius: 20px 20px 20px 5px;
+  background: var(--surface);
+  color: var(--text);
+  justify-self: start;
+  box-shadow: 0 1px 5px rgba(23, 32, 30, .08);
+}
+
+.bubble[dir="rtl"] {
+  font-size: 16px;
+  line-height: 1.75;
+  text-align: right;
+}
+
+.composer {
+  padding: 10px 16px 12px;
+  background: var(--surface);
+  border-radius: 26px 26px 0 0;
+  box-shadow: 0 -5px 18px rgba(23, 32, 30, .07);
+}
+
+.voice-status { min-height: 0; color: var(--primary); font-size: 14px; }
+.voice-status:not(:empty) { margin-bottom: 7px; }
+.input-row { display: flex; gap: 8px; }
+.input-row input {
+  min-width: 0;
+  flex: 1;
+  height: 50px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 0 16px;
+  outline: none;
+  background: var(--background);
+}
+.input-row input:focus { border-color: var(--primary); }
+.send-button {
+  width: 50px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--primary);
+  color: white;
+  font-size: 24px;
+}
+.send-button:disabled { opacity: .45; }
+.mic-button {
+  width: 100%;
+  height: 58px;
+  margin-top: 10px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--primary);
+  color: white;
+  font-weight: 800;
+  font-size: 18px;
+}
+.mic-button.listening { background: var(--danger); animation: pulse 1.2s infinite; }
+.mic-icon { font-size: 22px; margin-right: 6px; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 7px rgba(200, 74, 74, .12); } }
+
+.bottom-nav {
+  display: flex;
+  background: var(--surface);
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -5px 18px rgba(23, 32, 30, .08);
+}
+.nav-item {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  display: grid;
+  place-content: center;
+  gap: 2px;
+}
+.nav-item span { font-size: 19px; line-height: 20px; }
+.nav-item strong { font-size: 12px; }
+.nav-item.active { color: var(--primary); }
+
+#privacyView { display: none; overflow: hidden; }
+#privacyView.active { display: block; }
+.privacy-content {
+  height: 100%;
+  padding: 20px;
+  overflow-y: auto;
+  display: grid;
+  gap: 16px;
+}
+.privacy-content h1 { margin: 4px 0 5px; color: var(--primary); font-size: 28px; }
+.eyebrow { margin: 0; color: var(--primary); font-size: 12px; font-weight: 800; letter-spacing: 1px; }
+.section-lead { margin: 0; color: var(--muted); line-height: 1.4; }
+.mode-card {
+  padding: 18px;
+  border-radius: 22px;
+  background: var(--primary-soft);
+}
+.mode-card p { margin: 0 0 8px; color: var(--primary); font-size: 12px; font-weight: 800; }
+.mode-card h2 { margin: 0 0 5px; font-size: 20px; }
+.mode-card span { color: var(--text); line-height: 1.4; }
+.settings-card { padding: 16px; border-radius: 20px; background: var(--surface); box-shadow: 0 1px 5px rgba(23,32,30,.06); }
+.setting-row { display: flex; align-items: center; gap: 12px; }
+.setting-row > div { flex: 1; display: grid; gap: 3px; }
+.setting-row strong { font-size: 16px; }
+.setting-row span { color: var(--muted); font-size: 13px; line-height: 1.35; }
+.divider { height: 1px; margin: 14px 0; background: var(--line); }
+.switch { position: relative; width: 48px; height: 28px; flex: none; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.switch > span { position: absolute; inset: 0; border-radius: 999px; background: #d4d9d7; }
+.switch > span::after { content: ""; position: absolute; width: 22px; height: 22px; left: 3px; top: 3px; border-radius: 50%; background: white; transition: .2s; }
+.switch input:checked + span { background: var(--primary); }
+.switch input:checked + span::after { transform: translateX(20px); }
+.section-title { margin: 2px 0 10px; font-size: 18px; }
+.segmented { display: flex; gap: 8px; }
+.segment { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: var(--background); }
+.segment.active { border-color: var(--primary); background: var(--primary); color: white; }
+.tip { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+.permission-list { display: grid; gap: 15px; }
+.permission { display: flex; align-items: center; justify-content: space-between; }
+.permission span { display: grid; }
+.permission small { color: var(--muted); }
+.permission b { border-radius: 999px; padding: 6px 10px; background: var(--secondary-soft); color: #795200; font-size: 12px; }
+.permission b.on { background: var(--primary-soft); color: var(--primary); }
+.danger-button {
+  min-height: 54px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--danger);
+  color: white;
+  font-weight: 800;
+}
+
+dialog {
+  width: min(calc(100% - 32px), 380px);
+  border: 0;
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.25);
+}
+dialog::backdrop { background: rgba(8, 20, 17, .45); }
+dialog h2 { margin-top: 0; }
+dialog p { color: var(--muted); }
+dialog div { display: flex; justify-content: flex-end; gap: 8px; }
+dialog button { border: 0; border-radius: 10px; padding: 10px 14px; background: var(--line); }
+dialog button.danger { background: var(--danger); color: white; }
+
+@media (min-width: 431px) {
+  .app-shell { height: min(860px, 96vh); margin-top: 2vh; border-radius: 24px; }
+}
+</style>
 </head>
 <body>
   <div class="app-shell">
@@ -279,7 +352,7 @@
         <div class="language-picker" aria-label="Chat language">
           <button class="language active" type="button" data-lang="English">English</button>
           <button class="language" type="button" data-lang="Roman Urdu">Roman Urdu</button>
-          <button class="language" type="button" data-lang="اردو">اردو</button>
+          <button class="language" type="button" data-lang="Ø§Ø±Ø¯Ùˆ">Ø§Ø±Ø¯Ùˆ</button>
         </div>
 
         <div class="chat-scroll" id="chatScroll">
@@ -288,9 +361,15 @@
             <h1>How can I help?</h1>
             <p>Talk, type, or choose a quick action.<br>Your everyday tasks stay on your phone.</p>
             <div class="suggestions">
-              <button type="button" data-command="Open WhatsApp"><span>Open WhatsApp</span><span class="arrow">›</span></button>
-              <button type="button" data-command="Find a YouTube video"><span>Find a YouTube video</span><span class="arrow">›</span></button>
-              <button type="button" data-command="Turn on Wi-Fi"><span>Turn on Wi-Fi</span><span class="arrow">›</span></button>
+              <button type="button" data-command="Open WhatsApp">
+                <span>Open WhatsApp</span><span class="arrow">â€º</span>
+              </button>
+              <button type="button" data-command="Find a YouTube video">
+                <span>Find a YouTube video</span><span class="arrow">â€º</span>
+              </button>
+              <button type="button" data-command="Turn on Wi-Fi">
+                <span>Turn on Wi-Fi</span><span class="arrow">â€º</span>
+              </button>
             </div>
           </div>
           <div class="messages" id="messages" aria-live="polite"></div>
@@ -299,11 +378,11 @@
         <div class="composer">
           <div class="voice-status" id="voiceStatus"></div>
           <div class="input-row">
-            <input id="messageInput" type="text" autocomplete="off" placeholder="Type here…" aria-label="Message">
-            <button class="send-button" id="sendButton" type="button" aria-label="Send message">↑</button>
+            <input id="messageInput" type="text" autocomplete="off" placeholder="Type hereâ€¦" aria-label="Message">
+            <button class="send-button" id="sendButton" type="button" aria-label="Send message">â†‘</button>
           </div>
           <button class="mic-button" id="micButton" type="button">
-            <span class="mic-icon">◎</span>
+            <span class="mic-icon">â—Ž</span>
             <span id="micLabel">Tap to speak</span>
           </button>
         </div>
@@ -316,51 +395,78 @@
             <h1>Privacy &amp; settings</h1>
             <p class="section-lead">Choose how Digital Dost works and what it can use.</p>
           </div>
+
           <div class="mode-card">
             <p>CURRENT MODE</p>
             <h2 id="currentMode">Local Privacy Mode</h2>
             <span id="modeDescription">No cloud AI. Your conversations stay on this device.</span>
           </div>
+
           <div class="settings-card">
             <div class="setting-row">
-              <div><strong>Online AI Mode</strong><span>Use an external AI service for open questions.</span></div>
-              <label class="switch"><input id="onlineToggle" type="checkbox"><span></span></label>
+              <div>
+                <strong>Online AI Mode</strong>
+                <span>Use an external AI service for open questions.</span>
+              </div>
+              <label class="switch">
+                <input id="onlineToggle" type="checkbox">
+                <span></span>
+              </label>
             </div>
             <div class="divider"></div>
             <div class="setting-row">
-              <div><strong>Floating assistant</strong><span>Keep a quick-access button available.</span></div>
-              <label class="switch"><input id="floatingToggle" type="checkbox" checked><span></span></label>
+              <div>
+                <strong>Floating assistant</strong>
+                <span>Keep a quick-access button available.</span>
+              </div>
+              <label class="switch">
+                <input id="floatingToggle" type="checkbox" checked>
+                <span></span>
+              </label>
             </div>
             <div class="divider"></div>
             <div class="setting-row">
-              <div><strong>Speak replies</strong><span>Read voice answers aloud.</span></div>
-              <label class="switch"><input id="speakToggle" type="checkbox"><span></span></label>
+              <div>
+                <strong>Speak replies</strong>
+                <span>Read voice answers aloud.</span>
+              </div>
+              <label class="switch">
+                <input id="speakToggle" type="checkbox">
+                <span></span>
+              </label>
             </div>
           </div>
+
           <section>
             <h2 class="section-title">Voice recognition language</h2>
             <div class="settings-card segmented">
               <button class="segment active" type="button" data-voice="English">English</button>
-              <button class="segment" type="button" data-voice="اردو">اردو</button>
+              <button class="segment" type="button" data-voice="Ø§Ø±Ø¯Ùˆ">Ø§Ø±Ø¯Ùˆ</button>
             </div>
             <p class="tip">For Roman Urdu, type it or use the Urdu voice option.</p>
           </section>
+
           <section>
             <h2 class="section-title">Permissions</h2>
             <div class="settings-card permission-list">
-              <div class="permission"><span><strong>Microphone</strong><small>Used only when you tap speak</small></span><b>On</b></div>
+              <div class="permission"><span><strong>Microphone</strong><small>Used only when you tap speak</small></span><b class="on">On</b></div>
               <div class="permission"><span><strong>Floating overlay</strong><small>Displays above other apps</small></span><b>Demo</b></div>
               <div class="permission"><span><strong>Contacts</strong><small>You choose contacts yourself</small></span><b>Off</b></div>
             </div>
           </section>
+
           <button class="danger-button" id="deleteButton" type="button">Delete all conversations</button>
         </div>
       </section>
     </main>
 
     <nav class="bottom-nav" aria-label="Main navigation">
-      <button class="nav-item active" type="button" data-view="chat"><span>◉</span><strong>Chat</strong></button>
-      <button class="nav-item" type="button" data-view="privacy"><span>⌁</span><strong>Privacy</strong></button>
+      <button class="nav-item active" type="button" data-view="chat">
+        <span>â—‰</span><strong>Chat</strong>
+      </button>
+      <button class="nav-item" type="button" data-view="privacy">
+        <span>âŒ</span><strong>Privacy</strong>
+      </button>
     </nav>
   </div>
 
@@ -373,6 +479,229 @@
     </div>
   </dialog>
 
-  <script src="script.js"></script>
+  <script>
+const state = {
+  online: false,
+  speak: false,
+  listening: false
+};
+
+const chatScroll = document.querySelector("#chatScroll");
+const messages = document.querySelector("#messages");
+const welcome = document.querySelector("#welcome");
+const input = document.querySelector("#messageInput");
+const sendButton = document.querySelector("#sendButton");
+const micButton = document.querySelector("#micButton");
+const micLabel = document.querySelector("#micLabel");
+const voiceStatus = document.querySelector("#voiceStatus");
+const deleteDialog = document.querySelector("#deleteDialog");
+let conversationHistory = [];
+
+function formatBubbleText(bubble, text) {
+  bubble.textContent = text;
+  if (/[\u0600-\u06FF]/.test(text)) {
+    bubble.dir = "rtl";
+    bubble.lang = "ur";
+  } else {
+    bubble.dir = "ltr";
+  }
+}
+
+const responses = [
+  [/open whatsapp/i, "I can open WhatsApp for you. In a full phone integration this would launch the app; this browser demo keeps everything local."],
+  [/youtube|video/i, "I can search YouTube for videos about your topic. This web demo will not open external apps or collect your search history."],
+  [/wifi|wi-fi/i, "To turn on Wi-Fi, open your device's quick settings and tap the Wi-Fi tile."],
+  [/time/i, "The current time is " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + "."],
+  [/hello|hi|salam/i, "Assalam-o-Alaikum! How can I help you today?"]
+];
+
+function showView(viewName) {
+  document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+  document.querySelectorAll(".nav-item, .brand").forEach(item => item.classList.remove("active"));
+  document.querySelector("#" + viewName + "View")?.classList.add("active");
+  document.querySelectorAll('[data-view="' + viewName + '"]').forEach(item => item.classList.add("active"));
+}
+
+function addMessage(text, role = "user") {
+  welcome.hidden = true;
+  const bubble = document.createElement("div");
+  bubble.className = "bubble " + (role === "assistant" ? "assistant" : "user");
+  formatBubbleText(bubble, text);
+  messages.appendChild(bubble);
+  conversationHistory.push({ role, content: text });
+  localStorage.setItem("digitalDostHistory", JSON.stringify(conversationHistory.slice(-20)));
+  chatScroll.scrollTop = chatScroll.scrollHeight;
+}
+
+function getResponse(text) {
+  const match = responses.find(([pattern]) => pattern.test(text));
+  return match ? match[1] : "I understand you said: â€œ" + text + "â€. I can help with apps, settings, reminders, searches, and everyday questions.";
+}
+
+async function sendMessage(text) {
+  const cleanText = text.trim();
+  if (!cleanText) return;
+  addMessage(cleanText, "user");
+  input.value = "";
+  sendButton.disabled = true;
+
+  let answer;
+  if (state.online) {
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: conversationHistory.slice(-20) })
+      });
+      const data = await response.json().catch(() => ({
+        success: false,
+        error: "The server returned an invalid response."
+      }));
+      if (!response.ok || !data.success) throw new Error(data.error || "Request failed.");
+      answer = data.response;
+    } catch (error) {
+      answer = error.message || "Unable to reach the AI service. Please try again.";
+    }
+  } else {
+    await new Promise(resolve => window.setTimeout(resolve, 350));
+    answer = getResponse(cleanText);
+  }
+
+  addMessage(answer, "assistant");
+  sendButton.disabled = false;
+  if (state.speak && "speechSynthesis" in window) {
+    speechSynthesis.speak(new SpeechSynthesisUtterance(answer));
+  }
+}
+
+document.querySelectorAll("[data-view]").forEach(button => {
+  button.addEventListener("click", () => showView(button.dataset.view));
+});
+
+document.querySelectorAll("[data-lang]").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll("[data-lang]").forEach(item => item.classList.remove("active"));
+    button.classList.add("active");
+  });
+});
+
+document.querySelectorAll("[data-voice]").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll("[data-voice]").forEach(item => item.classList.remove("active"));
+    button.classList.add("active");
+  });
+});
+
+document.querySelectorAll("[data-command]").forEach(button => {
+  button.addEventListener("click", () => sendMessage(button.dataset.command));
+});
+
+sendButton.addEventListener("click", () => sendMessage(input.value));
+input.addEventListener("keydown", event => {
+  if (event.key === "Enter") sendMessage(input.value);
+});
+
+input.addEventListener("input", () => {
+  sendButton.disabled = !input.value.trim();
+});
+
+micButton.addEventListener("click", () => {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    voiceStatus.textContent = "Voice recognition is not supported in this browser.";
+    return;
+  }
+
+  state.listening = !state.listening;
+  micButton.classList.toggle("listening", state.listening);
+  micLabel.textContent = state.listening ? "Listeningâ€¦ tap to stop" : "Tap to speak";
+
+  if (!state.listening) return;
+  const recognition = new SpeechRecognition();
+  recognition.lang = document.querySelector("[data-voice].active")?.dataset.voice === "Ø§Ø±Ø¯Ùˆ" ? "ur-PK" : "en-US";
+  recognition.interimResults = true;
+  recognition.onresult = event => {
+    const result = Array.from(event.results).map(item => item[0].transcript).join("");
+    voiceStatus.textContent = result;
+  };
+  recognition.onend = () => {
+    const text = voiceStatus.textContent.trim();
+    state.listening = false;
+    micButton.classList.remove("listening");
+    micLabel.textContent = "Tap to speak";
+    voiceStatus.textContent = "";
+    if (text) sendMessage(text);
+  };
+  recognition.onerror = () => {
+    state.listening = false;
+    micButton.classList.remove("listening");
+    micLabel.textContent = "Tap to speak";
+    voiceStatus.textContent = "Could not access the microphone.";
+  };
+  recognition.start();
+});
+
+document.querySelector("#onlineToggle").addEventListener("change", event => {
+  state.online = event.target.checked;
+  document.querySelector("#currentMode").textContent = state.online ? "Online AI Mode" : "Local Privacy Mode";
+  document.querySelector("#modeDescription").textContent = state.online
+    ? "Open questions are shown as an external-service demo in this interface."
+    : "No cloud AI. Your conversations stay on this device.";
+  document.querySelector("#modeLabel").textContent = state.online ? "Online AI Mode" : "Local & private";
+  document.querySelector("#statusText").textContent = state.online ? "ONLINE" : "SAFE";
+});
+
+document.querySelector("#speakToggle").addEventListener("change", event => {
+  state.speak = event.target.checked;
+});
+
+document.querySelector("#deleteButton").addEventListener("click", () => deleteDialog.showModal());
+document.querySelector("#cancelDelete").addEventListener("click", () => deleteDialog.close());
+document.querySelector("#confirmDelete").addEventListener("click", () => {
+  messages.replaceChildren();
+  conversationHistory = [];
+  localStorage.removeItem("digitalDostHistory");
+  welcome.hidden = false;
+  deleteDialog.close();
+});
+
+async function refreshApiStatus() {
+  try {
+    const response = await fetch("/api/health");
+    const data = await response.json();
+    if (!data.success) {
+      document.querySelector("#modeDescription").textContent =
+        "Local mode is available. Add a new Groq API key to .env to enable online chat.";
+      document.querySelector("#statusText").textContent = "SETUP";
+    }
+  } catch {
+    document.querySelector("#modeDescription").textContent =
+      "Start Digital Dost with npm start to enable this interface.";
+    document.querySelector("#statusText").textContent = "OFFLINE";
+  }
+}
+
+try {
+  const savedHistory = JSON.parse(localStorage.getItem("digitalDostHistory") || "[]");
+  if (Array.isArray(savedHistory)) {
+    conversationHistory = savedHistory.slice(-20);
+    conversationHistory.forEach(item => {
+      if (typeof item.content === "string" && (item.role === "user" || item.role === "assistant")) {
+        welcome.hidden = true;
+        const bubble = document.createElement("div");
+        bubble.className = "bubble " + (item.role === "assistant" ? "assistant" : "user");
+        formatBubbleText(bubble, item.content);
+        messages.appendChild(bubble);
+      }
+    });
+  }
+} catch {
+  localStorage.removeItem("digitalDostHistory");
+}
+
+sendButton.disabled = true;
+refreshApiStatus();
+</script>
 </body>
 </html>
+

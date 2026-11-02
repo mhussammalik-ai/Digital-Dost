@@ -71,17 +71,10 @@ async function sendMessage(text) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: conversationHistory.slice(-20) })
       });
-      const responseText = await response.text();
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch {
-        throw new Error(
-          responseText
-            ? "The server returned an invalid response. Please restart Digital Dost."
-            : "The server returned an empty response. Please restart Digital Dost."
-        );
-      }
+      const data = await response.json().catch(() => ({
+        success: false,
+        error: "The server returned an invalid response."
+      }));
       if (!response.ok || !data.success) throw new Error(data.error || "Request failed.");
       answer = data.response;
     } catch (error) {
